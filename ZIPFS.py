@@ -9,10 +9,9 @@ from stat import S_IFDIR, S_IFLNK, S_IFREG
 from time import time
 import zipfile
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn
-
+## Used memory.py from the official fusepy git source as the base to build the program
 if not hasattr(__builtins__, 'bytes'):
     bytes = str
-
 
 class Memory(LoggingMixIn, Operations):
     def __init__(self,filename):
@@ -28,7 +27,7 @@ class Memory(LoggingMixIn, Operations):
             st_mtime=now,
             st_atime=now,
             st_nlink=2)
-	#print("files in the zip file ",self.zf.namelist())
+	print("files in the zip file ",self.zf.namelist())
 	for fname in self.zf.namelist():
 		if fname[-1]=='/':
 			self.gfiles['/'+fname[:-1]] = dict(
@@ -125,6 +124,10 @@ class Memory(LoggingMixIn, Operations):
         attrs = self.files[path].get('attrs', {})
         return attrs.keys()
 
+    def mkdir(self, path, mode):
+	print("mkdir called")
+        print("Unsupported Function")
+
     def open(self, path, flags):
 	print("open called")
         self.fd += 1
@@ -140,7 +143,7 @@ class Memory(LoggingMixIn, Operations):
         return self.zf.read(fname)
 
     def readdir(self, path, fh):
-	print("readdir called on ",path)
+	print("\n\n\n READDIR called on ",path)
 	#print("actual files",self.files)
 	self.uPath(path)
 	print("actual files 2 ",self.files)        
@@ -154,14 +157,34 @@ class Memory(LoggingMixIn, Operations):
 	print("statfs called")
         return dict(f_bsize=512, f_blocks=4096, f_bavail=2048)
 
+    def create(self, path, mode):
+	print("Unsupported Function")
+
+    def rename(self, old, new):
+	print("Unsupported Function")
+
+    def rmdir(self, path):
+	print("Unsupported Function")
+
+    def truncate(self, path, length, fh=None):
+	print("Unsupported Function")
+
+    def write(self, path, data, offset, fh):
+	print("Unsupported Function")
+
+    def chmod(self, path, mode):
+	print("Unsupported Function")
+
+    def chown(self, path, uid, gid):
+	print("Unsupported Function")
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('mount')
-    parser.add_argument('ZFN')
+    parser.add_argument('Mount')
+    parser.add_argument('Zip_File_Name')
     #print parser
     args = parser.parse_args()
-    print(args.mount)
+    #print(args.Mount)
     logging.basicConfig(level=logging.DEBUG)
-    fuse = FUSE(Memory(args.ZFN), args.mount, foreground=False, allow_other=True)
+    fuse = FUSE(Memory(args.Zip_File_Name), args.Mount, foreground=True, allow_other=True)
