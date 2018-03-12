@@ -12,6 +12,8 @@ sudo python setup.py install
 cd ..
 
 ######################################################
+
+
 Copy the program zipfs.py and ".zip" to a directory with an empty folder in it.
 Excute using "sudo python zipfs.py mount_point zipfilename.zip"
 Open another window/terminal to explore/traverse the mounted filesystem
